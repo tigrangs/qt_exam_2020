@@ -1,7 +1,5 @@
 #include "mymodel.h"
 
-#include <QDebug>
-
 MyModel::MyModel(QObject *parent)
     : QAbstractTableModel(parent)
 {

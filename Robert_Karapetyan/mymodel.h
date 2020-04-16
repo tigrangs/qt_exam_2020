@@ -3,8 +3,6 @@
 #include <QAbstractTableModel>
 #include <QPair>
 #include <QSize>
-#include <QVector2D>
-
 
 class MyModel : public QAbstractTableModel
 {

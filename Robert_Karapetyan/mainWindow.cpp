@@ -1,5 +1,4 @@
 #include "mainWindow.h"
-#include <QDebug>
 
 MainWindow::MainWindow(QWidget* parent): QMainWindow(parent){
 
@@ -53,6 +52,7 @@ void MainWindow::createToolbar()
     });
 
     act3->setCheckable(true);
+    act3->setChecked(true);
     QObject::connect(act3, SIGNAL(changed()), this, SLOT(change_selection()));
 }
 
@@ -112,7 +112,7 @@ void MainWindow::createModel_View()
     sourceView->setColumnWidth(0, 200);
     sourceView->show();
 
-    proxyModel = new MyProxyModel;
+    proxyModel = new QSortFilterProxyModel;
     proxyModel->setSourceModel(sourceModel);
 
     proxyView = new QTableView;
@@ -147,7 +147,9 @@ void MainWindow::createDockWidgets()
 
     right_widget_1->setWidget(layoutwidget1);
     right_widget_2->setWidget(layoutwidget2);
-    tabifyDockWidget(right_widget_1,right_widget_2);
+    tabifyDockWidget(right_widget_2,right_widget_1);
+
+    QObject::connect(right_widget_1, SIGNAL(visibilityChanged(bool)), this, SLOT(visibilityChangeReceived(bool )));
 }
 
 void MainWindow::createCentralwidget()
@@ -161,7 +163,7 @@ void MainWindow::createCentralwidget()
 
     QLineEdit* lineedit = new QLineEdit;
     lineedit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    QObject::connect(lineedit, SIGNAL(textChanged(QString)), proxyModel, SLOT(filterStringReceived(QString)));
+    QObject::connect(lineedit, SIGNAL(textChanged(QString)), proxyModel, SLOT(setFilterFixedString(QString)));
 
     viewLayout->addWidget(title, 0,0);
     viewLayout->addWidget(filter, 1,6, Qt::AlignRight);
@@ -199,13 +201,17 @@ void MainWindow::createGridlayout()
 
 void MainWindow::change_selection()
 {
-    if(first_is_visible){
-        right_widget_2->raise();
-        first_is_visible = !first_is_visible;
-    }
-    else{
-        right_widget_1->raise();
-        first_is_visible = !first_is_visible;
-    }
+    QAction* act3 = this->toolbar->findChild<QAction*>("change selection action");
+    right_widget_1->blockSignals(true);
+    act3->isChecked() ? right_widget_2->raise() : right_widget_1->raise();
+    right_widget_1->blockSignals(false);
+}
+
+void MainWindow::visibilityChangeReceived(bool)
+{
+    QAction* act3 = this->toolbar->findChild<QAction*>("change selection action");
+    act3->blockSignals(true);
+    act3->setChecked(!act3->isChecked());
+    act3->blockSignals(false);
 }
 

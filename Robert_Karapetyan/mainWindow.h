@@ -13,16 +13,14 @@
 #include <QPushButton>
 #include <QAction>
 #include <QMessageBox>
+#include <QSortFilterProxyModel>
 
 #include "mymodel.h"
-#include "myproxymodel.h"
 
 class MainWindow : public QMainWindow{
      Q_OBJECT
 public:
     MainWindow(QWidget* parent = nullptr);
-private:
-    bool first_is_visible = false;
 private:
     QDockWidget* right_widget_1 = nullptr;
     QDockWidget* right_widget_2 = nullptr;
@@ -32,7 +30,7 @@ private:
 private:
     MyModel* sourceModel = nullptr;
     QTableView* sourceView = nullptr;
-    MyProxyModel* proxyModel = nullptr;
+    QSortFilterProxyModel* proxyModel = nullptr;
     QTableView* proxyView = nullptr;
 private:
     QVBoxLayout* vboxlayout = nullptr;
@@ -48,5 +46,6 @@ private:
     void createGridlayout();
 public slots:
     void change_selection();
+    void visibilityChangeReceived(bool bFloating );
 };
 
